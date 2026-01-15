@@ -2,6 +2,8 @@
 
 A single-file HTML photo gallery for browsing construction site photos organized in folders.
 
+<img src="assets/Preview.jpg" alt="Italian Trulli">
+
 ## Features
 
 - **Single HTML file** - No server required, works offline
