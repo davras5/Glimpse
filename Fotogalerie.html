@@ -637,13 +637,16 @@
             showImage(0);
             updateDuration();
 
-            // Hide app loader after first image loads and renders
+            // Hide app loader after first image loads and UI is rendered
             const mainImg = document.getElementById('mainImage');
             const hideAppLoader = () => {
-                // Wait for next frame to ensure image is painted
+                // Wait for frames to ensure image + UI is painted
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
-                        document.getElementById('appLoader').classList.add('hidden');
+                        // Additional small delay for thumbnails/layout to stabilize
+                        setTimeout(() => {
+                            document.getElementById('appLoader').classList.add('hidden');
+                        }, 50);
                     });
                 });
             };
@@ -728,7 +731,9 @@
                 const hideLoader = () => {
                     requestAnimationFrame(() => {
                         requestAnimationFrame(() => {
-                            filterLoader.classList.remove('visible');
+                            setTimeout(() => {
+                                filterLoader.classList.remove('visible');
+                            }, 30);
                         });
                     });
                 };
