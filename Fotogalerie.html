@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baustellenfotos Theilerhaus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: #16213e;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .header h1 {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #ff6b6b;
+        }
+
+        button.secondary {
+            background: #0f3460;
+        }
+
+        button.secondary:hover {
+            background: #1a4a7a;
+        }
+
+        button.active {
+            background: #4ecca3;
+        }
+
+        select, input[type="range"] {
+            background: #0f3460;
+            color: white;
+            border: 1px solid #e94560;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            width: 100px;
+        }
+
+        label {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .viewer {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #0f0f23;
+            overflow: hidden;
+        }
+
+        .viewer img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: opacity 0.3s;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(233, 69, 96, 0.8);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 80px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .nav-btn:hover {
+            background: #e94560;
+        }
+
+        .nav-btn.prev { left: 0; border-radius: 0 5px 5px 0; }
+        .nav-btn.next { right: 0; border-radius: 5px 0 0 5px; }
+
+        .thumbnails {
+            background: #16213e;
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            max-height: 120px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .thumbnails::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .thumbnails::-webkit-scrollbar-track {
+            background: #0f3460;
+        }
+
+        .thumbnails::-webkit-scrollbar-thumb {
+            background: #e94560;
+            border-radius: 4px;
+        }
+
+        .thumb {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .thumb:hover {
+            opacity: 0.9;
+        }
+
+        .thumb.active {
+            opacity: 1;
+            border-color: #e94560;
+        }
+
+        /* Two-column layout */
+        .app-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        .folder-nav {
+            width: 264px;
+            min-width: 140px;
+            max-width: 450px;
+            background: #141e30;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .resize-handle {
+            width: 4px;
+            background: #0a1628;
+            cursor: col-resize;
+            flex-shrink: 0;
+            transition: background 0.15s;
+            position: relative;
+        }
+
+        .resize-handle:hover,
+        .resize-handle.dragging {
+            background: #e94560;
+        }
+
+        .resize-handle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 32px;
+            background: #2a3f5f;
+            border-radius: 1px;
+        }
+
+        .resize-handle:hover::after,
+        .resize-handle.dragging::after {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .folder-nav-title {
+            color: #aaa;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+        }
+
+        .folder-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+            text-align: left;
+            border-radius: 4px;
+            background: transparent;
+            color: #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .folder-btn:hover {
+            background: #0f3460;
+            color: white;
+        }
+
+        .folder-btn.active {
+            background: #e94560;
+            color: white;
+        }
+
+        .folder-btn .folder-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .folder-btn .folder-count {
+            flex-shrink: 0;
+            opacity: 0.6;
+            font-size: 11px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* YouTube-style player controls */
+        .player-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 40px 15px 10px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+            transition: opacity 0.3s;
+        }
+
+        .player-controls .progress-bar {
+            height: 5px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .player-controls .progress-bar:hover {
+            height: 7px;
+        }
+
+        .player-controls .progress {
+            height: 100%;
+            background: #e94560;
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .player-btn {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            opacity: 0.9;
+            transition: opacity 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+        }
+
+        .player-btn:hover {
+            opacity: 1;
+            background: transparent;
+            transform: scale(1.1);
+        }
+
+        .player-btn.play-btn {
+            font-size: 22px;
+        }
+
+        .player-controls .counter {
+            color: white;
+            font-size: 13px;
+            opacity: 0.9;
+            white-space: nowrap;
+        }
+
+        .player-controls .file-info {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Fullscreen styles */
+        body.fullscreen .header,
+        body.fullscreen .folder-nav,
+        body.fullscreen .thumbnails,
+        body.fullscreen .resize-handle {
+            display: none;
+        }
+
+        body.fullscreen .app-container {
+            height: 100vh;
+        }
+
+        body.fullscreen .main-container {
+            height: 100vh;
+        }
+
+        body.fullscreen .player-controls,
+        body.fullscreen .nav-btn {
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        body.fullscreen.controls-hidden .player-controls,
+        body.fullscreen.controls-hidden .nav-btn {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(233, 69, 96, 0.2);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .loading.visible {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px;
+            }
+            .header h1 {
+                font-size: 1rem;
+                width: 100%;
+            }
+            .controls {
+                width: 100%;
+                justify-content: center;
+            }
+            .nav-btn {
+                width: 40px;
+                height: 60px;
+                font-size: 18px;
+            }
+            .thumb {
+                width: 60px;
+                height: 60px;
+            }
+            .player-controls .file-info {
+                display: none;
+            }
+            .player-btn {
+                min-width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+            .player-btn.play-btn {
+                font-size: 20px;
+            }
+            .folder-nav,
+            .resize-handle {
+                display: none;
+            }
+            .app-container {
+                height: calc(100vh - 100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Baustellenfotos Theilerhaus</h1>
+        <div class="controls">
+            <div class="control-group">
+                <label>Dauer:</label>
+                <input type="range" id="duration" min="1" max="10" value="3" onchange="updateDuration()">
+                <span id="durationLabel">3s</span>
+            </div>
+            <div class="control-group">
+                <label>Sortieren:</label>
+                <select id="sortOrder" onchange="sortImages()">
+                    <option value="folder-asc">Ordner A-Z</option>
+                    <option value="folder-desc">Ordner Z-A</option>
+                    <option value="name-asc">Dateiname A-Z</option>
+                    <option value="name-desc">Dateiname Z-A</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div class="folder-nav" id="folderNav">
+            <div class="folder-nav-title">Ordner</div>
+        </div>
+        <div class="resize-handle" id="resizeHandle"></div>
+
+        <div class="main-container">
+        <div class="thumbnails" id="thumbnails"></div>
+
+        <div class="viewer" onclick="navigate(1)">
+            <button class="nav-btn prev" onclick="event.stopPropagation(); navigate(-1)">&#10094;</button>
+            <img id="mainImage" src="" alt="Baustellenfoto">
+            <button class="nav-btn next" onclick="event.stopPropagation(); navigate(1)">&#10095;</button>
+            <div class="loading" id="loading"></div>
+
+            <!-- YouTube-style player controls -->
+            <div class="player-controls" onclick="event.stopPropagation()">
+                <div class="progress-bar" onclick="seekProgress(event)">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="controls-row">
+                    <div class="controls-left">
+                        <button class="player-btn play-btn" id="playBtnPlayer" onclick="togglePlay()" title="Play/Pause (Leertaste)">&#9654;</button>
+                        <button class="player-btn" onclick="navigate(-1)" title="Vorheriges Bild">&#10094;</button>
+                        <button class="player-btn" onclick="navigate(1)" title="Nächstes Bild">&#10095;</button>
+                        <span class="file-info"><span id="currentFolder2"></span><span id="currentFile2"></span></span>
+                    </div>
+                    <div class="controls-right">
+                        <span class="counter" id="counter"></span>
+                        <button class="player-btn" onclick="toggleFullscreen()" title="Vollbild (F)">&#x26F6;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        // Image data embedded
+        const allImages = ["2024-01_Altlasten und Aushub/PXL_20240110_094909339.jpg","2024-01_Altlasten und Aushub/PXL_20240124_074207204.jpg","2024-01_Altlasten und Aushub/PXL_20240124_074305785.jpg","2024-01_Altlasten und Aushub/PXL_20240129_084721824.jpg","2024-01_Altlasten und Aushub/PXL_20240129_084725863.jpg","2024-01_Altlasten und Aushub/PXL_20240129_130955055.jpg","2024-01_Altlasten und Aushub/PXL_20240129_131002613.jpg","2024-01_Altlasten und Aushub/PXL_20240129_140059836.jpg","2024-01_Altlasten und Aushub/PXL_20240129_140403099.jpg","2024-01_Altlasten und Aushub/PXL_20240130_120616387.jpg","2024-02_Aushub und Abbrüche/IMG_0017.jpg","2024-02_Aushub und Abbrüche/IMG_0018.jpg","2024-02_Aushub und Abbrüche/IMG_0019.jpg","2024-02_Aushub und Abbrüche/IMG_0020.jpg","2024-02_Aushub und Abbrüche/IMG_0021.jpg","2024-02_Aushub und Abbrüche/IMG_0022.jpg","2024-02_Aushub und Abbrüche/IMG_0023.jpg","2024-02_Aushub und Abbrüche/IMG_0024.jpg","2024-02_Aushub und Abbrüche/IMG_0025.jpg","2024-02_Aushub und Abbrüche/IMG_0026.jpg","2024-02_Aushub und Abbrüche/IMG_0027.jpg","2024-02_Aushub und Abbrüche/IMG_0028.jpg","2024-02_Aushub und Abbrüche/IMG_0029.jpg","2024-02_Aushub und Abbrüche/IMG_0030.jpg","2024-02_Aushub und Abbrüche/IMG_0031.jpg","2024-02_Aushub und Abbrüche/IMG_0032.jpg","2024-02_Aushub und Abbrüche/IMG_0033.jpg","2024-02_Aushub und Abbrüche/IMG_0034.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085118535.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085126611.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085731720.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085801212.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090116836.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090120393.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090238344.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090251624.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_091151462.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_091832836.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065648306.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065655945.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065728821.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065731228.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065758175.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065804116.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065813349.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065855819.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065907219.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065935950.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065942859.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065948681.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070000783.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070013783.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070016811.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070043008.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070052650.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070125551.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070211758.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070212848.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070257463.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070302906.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070321727.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_071312927.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_071318356.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_092927668.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_092932242.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_092938970.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104316367.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104324234.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104326857.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104732175.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_165220510.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071102210.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071112929.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071143320.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071151290.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071200071.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071204887.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071220025.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071233007.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071301249.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_103810657.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_103813583.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_103849062.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104018437.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104052199.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104112497.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104116035.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104128750.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104415295.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104520389.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104530074.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104545362.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104557768.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104612396.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104621227.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084124813.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084140168.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084831045.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084835562.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_143203561.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_143216452.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_145932808.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_145936689.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_145941179.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_142752090.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_142807444.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143059500.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143136400.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143151413.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143230468.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143308467.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143329317.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143407405.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143911753.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_144634282.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_144637751.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_144651034.jpg","2024-03_Abrüche und Aushub/PXL_20240110_094909339.jpg","2024-03_Abrüche und Aushub/PXL_20240124_074207204.jpg","2024-03_Abrüche und Aushub/PXL_20240124_074305785.jpg","2024-03_Abrüche und Aushub/PXL_20240129_084721824.jpg","2024-03_Abrüche und Aushub/PXL_20240129_084725863.jpg","2024-03_Abrüche und Aushub/PXL_20240129_130955055.jpg","2024-03_Abrüche und Aushub/PXL_20240129_131002613.jpg","2024-03_Abrüche und Aushub/PXL_20240129_140059836.jpg","2024-03_Abrüche und Aushub/PXL_20240129_140403099.jpg","2024-03_Abrüche und Aushub/PXL_20240130_120616387.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4732.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4733.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4734.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4796.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4797.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4798.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4799.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4800.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4801.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4802.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4803.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4804.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4805.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4806.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4807.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4808.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_053319071.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_053327037.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095023153.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095037771.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095106392.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095121304.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095258803.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095554230.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095554230_exported_880_1712051767594.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095730523.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095737870.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100722574.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100744375.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100848725.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100920144.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100937068.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100945396.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240408_061612646.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240408_075624005.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240408_075635698.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_061344723.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_061350011.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062540588.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062552736.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062625159.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062627576.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062640373.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062659545.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062747336.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_063113189.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_063218515.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240416_122600285.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240416_122603344.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240416_122739790.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084307157.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084310711.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084315179.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084320064.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084406561.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084725203.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_085031249.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112645693.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112705168.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112709791.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112720141.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112725077.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112739389.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093153520.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093200706.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093210973.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093233830.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093258353.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093311642.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093324441.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093600657.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093813866.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094007594.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094015091.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094410983.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094421121.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094647521.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094703453.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094714478.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095631538.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095640484.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095646594.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095706712.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095711199.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_062857803.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_062924780.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_062945218.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064252685.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064302687.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064318349.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064324507.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064428370.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064519827.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064648583.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064659396.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_065218692.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_065520299.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070358264.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070629472.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070639252.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070649707.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070655969.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070702180.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070714864.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070734714.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070738448.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070751010.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_120550751.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_120557549.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_125851912.jpg","2024-05_Statik und Baumeister/IMG_4810.JPG","2024-05_Statik und Baumeister/IMG_4811.JPG","2024-05_Statik und Baumeister/IMG_4812.JPG","2024-05_Statik und Baumeister/IMG_4813.JPG","2024-05_Statik und Baumeister/IMG_4814.JPG","2024-05_Statik und Baumeister/IMG_4815.JPG","2024-05_Statik und Baumeister/IMG_4816.JPG","2024-05_Statik und Baumeister/IMG_4817.JPG","2024-05_Statik und Baumeister/IMG_4818.JPG","2024-05_Statik und Baumeister/IMG_4819.JPG","2024-05_Statik und Baumeister/IMG_4820.JPG","2024-05_Statik und Baumeister/PXL_20240507_054455100.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_054459639.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_054510597.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_055934363.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_055940728.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_055958953.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_060008611.jpg","2024-05_Statik und Baumeister/PXL_20240507_061734802.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062212625.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062301641.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062306897.jpg","2024-05_Statik und Baumeister/PXL_20240507_062350804.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062450407.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062457132.jpg","2024-05_Statik und Baumeister/PXL_20240507_070739329.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_070756929.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_070806005.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_093406769.MP.jpg","2024-06/PXL_20240604_071345527.MP.jpg","2024-06/PXL_20240604_071358517.MP.jpg","2024-06/PXL_20240604_071425575.MP.jpg","2024-06/PXL_20240604_071436977.MP.jpg","2024-06/PXL_20240604_071446715.MP.jpg","2024-06/PXL_20240604_071458570.MP.jpg","2024-06/PXL_20240604_071506699.MP.jpg","2024-06/PXL_20240604_071520569.MP.jpg","2024-06/PXL_20240604_071539310.MP.jpg","2024-06/PXL_20240604_071612701.MP.jpg","2024-06/PXL_20240604_071634941.MP.jpg","2024-06/PXL_20240604_071843044.jpg","2024-06/PXL_20240604_071847712.MP.jpg","2024-06/PXL_20240604_071934817.MP.jpg","2024-06/PXL_20240610_114135308.MP.jpg","2024-06/PXL_20240610_114138319.jpg","2024-06/PXL_20240610_114153284.jpg","2024-06/PXL_20240610_114159227.jpg","2024-06/PXL_20240610_114205348.MP.jpg","2024-06/PXL_20240610_114246023.MP.jpg","2024-06/PXL_20240610_114253416.MP.jpg","2024-06/PXL_20240610_114620281.MP.jpg","2024-06/PXL_20240610_114629864.MP.jpg","2024-06/PXL_20240610_114644086.MP.jpg","2024-06/PXL_20240610_130002497.jpg","2024-06/PXL_20240610_130005013.jpg","2024-06/PXL_20240610_130008131.jpg","2024-06/PXL_20240611_081958220.MP.jpg","2024-06/PXL_20240611_083713244.MP.jpg","2024-06/PXL_20240611_083912523.MP.jpg","2024-06/PXL_20240611_085127421.MP.jpg","2024-06/PXL_20240611_085351349.MP.jpg","2024-06/PXL_20240611_085729700.jpg","2024-06/PXL_20240611_085732526.MP.jpg","2024-06/PXL_20240611_085759200.jpg","2024-06/PXL_20240611_092246737.MP.jpg","2024-06/PXL_20240611_092305160.MP.jpg","2024-06/PXL_20240611_093526327.jpg","2025-08/IMG-20250827-WA0023.jpg","2025-08/IMG-20250827-WA0024.jpg","2025-08/IMG-20250827-WA0025.jpg","2025-08/IMG-20250827-WA0026.jpg","2025-08/IMG-20250827-WA0027.jpg","2025-08/IMG-20250827-WA0028.jpg","2025-08/IMG-20250827-WA0029.jpg","2025-08/IMG-20250827-WA0030.jpg","2025-08/IMG-20250827-WA0031.jpg","2025-08/IMG-20250827-WA0032.jpg","2025-08/IMG-20250827-WA0033.jpg","2025-08/IMG-20250827-WA0043.jpg","2025-08/IMG-20250827-WA0044.jpg","2025-08/PXL_20250825_052615130.jpg","2025-08/PXL_20250826_090943106.jpg","2025-08/PXL_20250826_090946914.jpg","2025-08/PXL_20250826_091003025.jpg","2025-08/PXL_20250826_091212087.jpg","2025-08/PXL_20250826_091626524.jpg","2025-08/PXL_20250826_091644740.jpg","2025-08/PXL_20250826_091646816.jpg","2025-08/PXL_20250826_092027083.jpg","2025-08/PXL_20250826_092244120.jpg","2025-08/PXL_20250826_092448632.jpg","2025-08/PXL_20250826_092731315.jpg","2025-08/PXL_20250826_093216850.jpg","2025-08/PXL_20250826_093506528.jpg","2025-08/PXL_20250826_095008644.jpg","2025-08/PXL_20250826_095236985.jpg","2025-08/PXL_20250826_095442699.jpg","2025-08/PXL_20250826_100318688.jpg","2025-08/PXL_20250826_100503829.jpg","2025-08/PXL_20250826_100751605.jpg","2025-08/PXL_20250826_101022637.jpg","2025-08/PXL_20250901_072734794.jpg","2025-08/PXL_20250901_075454781.jpg","2025-08/PXL_20250901_075842999.jpg","2025-08/PXL_20250901_075846446.jpg","2025-08/PXL_20250901_075853030.jpg","2025-08/PXL_20250901_080348912.jpg","2025-08/PXL_20250901_080352156.jpg","2025-08/PXL_20250901_110848078.jpg","2025-08/PXL_20250901_110911860.jpg","2025-09/IMG-20250902-WA0000.jpg","2025-09/jpg.jpg","2025-09/PXL_20250901_124337416.jpg","2025-09/PXL_20250901_125025293.jpg","2025-09/PXL_20250901_125030847.jpg","2025-09/PXL_20250901_132812891.jpg","2025-09/PXL_20250901_132958505.jpg","2025-09/PXL_20250901_133000875.jpg","2025-09/PXL_20250901_133049582.jpg","2025-09/PXL_20250901_133110083.jpg","2025-09/PXL_20250901_133128836.jpg","2025-09/PXL_20250902_050609715.jpg","2025-09/PXL_20250902_050613003.jpg","2025-09/PXL_20250902_050617915.jpg","2025-09/PXL_20250902_050623638.jpg","2025-09/PXL_20250902_050630899.jpg","2025-09/PXL_20250902_050634117.jpg","2025-09/PXL_20250902_050640978.jpg","2025-09/PXL_20250902_050656136.jpg","2025-09/PXL_20250902_051115475.jpg","2025-09/PXL_20250902_135838332.jpg","2025-09/PXL_20250902_135842401.jpg","2025-09/PXL_20250902_135852298.jpg","2025-09/PXL_20250902_135923954.jpg","2025-09/PXL_20250902_140005436.jpg","2025-09/PXL_20250902_151133961.jpg","2025-09/PXL_20250902_151556456.jpg","2025-10/PXL_20241007_075324780.MP.jpg","2025-10/PXL_20241007_075327256.MP.jpg","2025-10/PXL_20241007_080044220.MP.jpg","2025-10/PXL_20241007_080147993.MP.jpg","2025-10/PXL_20241016_071213913.MP.jpg","2025-10/PXL_20251015_085414795.jpg","2025-12/PXL_20241204_095246814.jpg","2025-12/PXL_20241204_095358267.jpg","2025-12/PXL_20241204_095435962.jpg","2025-12/PXL_20241204_095618901.jpg","2025-12/PXL_20241204_095623651.jpg","2025-12/PXL_20241204_095631647.jpg","2025-12/PXL_20241204_095823497.jpg","2025-12/PXL_20241204_095831548.jpg","2025-12/PXL_20241204_095915738.jpg","2025-12/PXL_20241204_095931247.jpg","2025-12/PXL_20241204_100127032.jpg","2025-12/PXL_20251212_131626552.jpg","2025-12/PXL_20251212_134038510.jpg","2025-12/PXL_20251212_134045998.jpg","2025-12/PXL_20251217_075253644.jpg","2025-12/PXL_20251217_081259805.jpg","2025-12/PXL_20251217_081324047.jpg","2025-12/PXL_20251217_082153886.jpg","2025-12/PXL_20251217_082201358.jpg","2025-12/PXL_20251217_082223661.jpg","2025-12/PXL_20251217_082251313.jpg","2025-12/PXL_20251217_085356153.jpg","2025-12/PXL_20251217_085401724.jpg","2025-12/PXL_20251217_085405188.jpg","2025-12/PXL_20251217_085606092.jpg","2025-12/PXL_20251217_085610014.jpg","2025-12/PXL_20251217_090500345.jpg","2025-12/PXL_20251217_112712093.jpg","2025-12/PXL_20251217_112729520.jpg","2025-12/PXL_20251219_115759894.jpg","2025-12/PXL_20251219_115804252.jpg","2025-12/PXL_20251219_115837886.jpg","2025-12/PXL_20251219_115840547.jpg","2025-12/PXL_20251219_120005771.jpg"];
+
+        let images = [...allImages];
+        let currentIndex = 0;
+        let isPlaying = false;
+        let playInterval = null;
+        let duration = 3000;
+        let currentFolder = 'all';
+        let hideControlsTimeout = null;
+        let loadingTimeout = null;
+        const preloadCache = new Map(); // Cache for preloaded images
+        const PRELOAD_COUNT = 2; // Number of images to preload ahead
+
+        // Get unique folders
+        const folders = [...new Set(allImages.map(img => img.split('/')[0]))].sort();
+
+        // Initialize
+        function init() {
+            buildFolderNav();
+            buildThumbnails();
+            showImage(0);
+            updateDuration();
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') navigate(-1);
+                if (e.key === 'ArrowRight') navigate(1);
+                if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+                if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+                if (e.key === 'Escape' && document.body.classList.contains('fullscreen')) toggleFullscreen();
+                // Show controls on any key press in fullscreen
+                if (document.body.classList.contains('fullscreen')) {
+                    showFullscreenControls();
+                }
+            });
+
+            // Mouse move to show controls in fullscreen
+            document.addEventListener('mousemove', () => {
+                if (document.body.classList.contains('fullscreen')) {
+                    showFullscreenControls();
+                }
+            });
+        }
+
+        function showFullscreenControls() {
+            document.body.classList.remove('controls-hidden');
+            clearTimeout(hideControlsTimeout);
+            hideControlsTimeout = setTimeout(() => {
+                if (document.body.classList.contains('fullscreen')) {
+                    document.body.classList.add('controls-hidden');
+                }
+            }, 3000);
+        }
+
+        function buildFolderNav() {
+            const nav = document.getElementById('folderNav');
+            nav.innerHTML = '<div class="folder-nav-title">Ordner</div>';
+            nav.innerHTML += `<button class="folder-btn active" onclick="filterByFolder('all')"><span class="folder-name">Alle Fotos</span><span class="folder-count">${allImages.length}</span></button>`;
+            folders.forEach(folder => {
+                const count = allImages.filter(img => img.startsWith(folder + '/')).length;
+                nav.innerHTML += `<button class="folder-btn" onclick="filterByFolder('${folder}')"><span class="folder-name">${folder}</span><span class="folder-count">${count}</span></button>`;
+            });
+        }
+
+        function filterByFolder(folder) {
+            currentFolder = folder;
+            if (folder === 'all') {
+                images = [...allImages];
+            } else {
+                images = allImages.filter(img => img.startsWith(folder + '/'));
+            }
+            preloadCache.clear(); // Clear cache when changing folder
+            sortImages();
+            currentIndex = 0;
+            buildThumbnails();
+            showImage(0);
+
+            // Update active state
+            document.querySelectorAll('.folder-btn').forEach((btn) => {
+                const nameSpan = btn.querySelector('.folder-name');
+                const btnFolder = nameSpan ? nameSpan.textContent : '';
+                btn.classList.toggle('active',
+                    (folder === 'all' && btnFolder === 'Alle Fotos') || btnFolder === folder);
+            });
+        }
+
+        function sortImages() {
+            const order = document.getElementById('sortOrder').value;
+            preloadCache.clear(); // Clear cache when order changes
+            images.sort((a, b) => {
+                const folderA = a.split('/')[0];
+                const folderB = b.split('/')[0];
+                const nameA = a.split('/')[1];
+                const nameB = b.split('/')[1];
+
+                switch(order) {
+                    case 'folder-asc':
+                        return folderA.localeCompare(folderB) || nameA.localeCompare(nameB);
+                    case 'folder-desc':
+                        return folderB.localeCompare(folderA) || nameA.localeCompare(nameB);
+                    case 'name-asc':
+                        return nameA.localeCompare(nameB);
+                    case 'name-desc':
+                        return nameB.localeCompare(nameA);
+                }
+            });
+            buildThumbnails();
+            showImage(currentIndex);
+        }
+
+        function buildThumbnails() {
+            const container = document.getElementById('thumbnails');
+            container.innerHTML = '';
+            images.forEach((img, i) => {
+                const thumb = document.createElement('img');
+                thumb.className = 'thumb' + (i === currentIndex ? ' active' : '');
+                thumb.src = encodeURI(img);
+                thumb.onclick = () => showImage(i);
+                thumb.loading = 'lazy';
+                container.appendChild(thumb);
+            });
+        }
+
+        function showImage(index) {
+            if (images.length === 0) return;
+
+            currentIndex = (index + images.length) % images.length;
+            const img = document.getElementById('mainImage');
+            const loading = document.getElementById('loading');
+            const imagePath = images[currentIndex];
+            const imageUrl = encodeURI(imagePath);
+
+            // Clear any pending loading indicator
+            clearTimeout(loadingTimeout);
+            loading.classList.remove('visible');
+
+            // Check if image is already preloaded
+            const cached = preloadCache.get(imagePath);
+            if (cached && cached.complete && cached.naturalWidth > 0) {
+                // Image is preloaded - instant display
+                img.src = cached.src;
+                preloadAhead();
+            } else {
+                // Not preloaded - load with spinner fallback
+                loadingTimeout = setTimeout(() => {
+                    loading.classList.add('visible');
+                }, 300);
+
+                const newImg = new Image();
+                newImg.onload = () => {
+                    clearTimeout(loadingTimeout);
+                    loading.classList.remove('visible');
+                    img.src = newImg.src;
+                    preloadCache.set(imagePath, newImg);
+                    preloadAhead();
+                };
+                newImg.onerror = () => {
+                    clearTimeout(loadingTimeout);
+                    loading.classList.remove('visible');
+                };
+                newImg.src = imageUrl;
+            }
+
+            // Update info in player controls
+            const parts = images[currentIndex].split('/');
+            document.getElementById('currentFolder2').textContent = parts[0] + ' / ';
+            document.getElementById('currentFile2').textContent = parts[1];
+            document.getElementById('counter').textContent = `${currentIndex + 1} / ${images.length}`;
+            document.getElementById('progress').style.width = ((currentIndex + 1) / images.length * 100) + '%';
+
+            // Update thumbnails
+            document.querySelectorAll('.thumb').forEach((t, i) => {
+                t.classList.toggle('active', i === currentIndex);
+                if (i === currentIndex) {
+                    t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            });
+        }
+
+        function preloadAhead() {
+            // Preload next N images
+            for (let i = 1; i <= PRELOAD_COUNT; i++) {
+                const nextIndex = (currentIndex + i) % images.length;
+                const nextPath = images[nextIndex];
+
+                // Skip if already cached
+                if (preloadCache.has(nextPath)) continue;
+
+                const preloadImg = new Image();
+                preloadImg.src = encodeURI(nextPath);
+                preloadCache.set(nextPath, preloadImg);
+            }
+
+            // Clean up old cache entries (keep only nearby images)
+            if (preloadCache.size > PRELOAD_COUNT + 3) {
+                const keepPaths = new Set();
+                for (let i = -1; i <= PRELOAD_COUNT; i++) {
+                    const idx = (currentIndex + i + images.length) % images.length;
+                    keepPaths.add(images[idx]);
+                }
+                for (const path of preloadCache.keys()) {
+                    if (!keepPaths.has(path)) {
+                        preloadCache.delete(path);
+                    }
+                }
+            }
+        }
+
+        function navigate(dir) {
+            showImage(currentIndex + dir);
+            if (isPlaying) resetPlayInterval();
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            // Update player button icon (▶ = play, ⏸ = pause)
+            const playBtn = document.getElementById('playBtnPlayer');
+            playBtn.innerHTML = isPlaying ? '&#9208;' : '&#9654;';
+
+            if (isPlaying) {
+                playInterval = setInterval(() => navigate(1), duration);
+            } else {
+                clearInterval(playInterval);
+            }
+        }
+
+        function resetPlayInterval() {
+            if (isPlaying) {
+                clearInterval(playInterval);
+                playInterval = setInterval(() => navigate(1), duration);
+            }
+        }
+
+        function updateDuration() {
+            const slider = document.getElementById('duration');
+            duration = slider.value * 1000;
+            document.getElementById('durationLabel').textContent = slider.value + 's';
+            resetPlayInterval();
+        }
+
+        function seekProgress(e) {
+            const rect = e.target.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            showImage(Math.floor(percent * images.length));
+        }
+
+        function toggleFullscreen() {
+            document.body.classList.toggle('fullscreen');
+            if (document.body.classList.contains('fullscreen')) {
+                document.documentElement.requestFullscreen?.() ||
+                document.documentElement.webkitRequestFullscreen?.();
+                // Start auto-hide timer
+                showFullscreenControls();
+            } else {
+                document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+                // Clear timer and show controls
+                clearTimeout(hideControlsTimeout);
+                document.body.classList.remove('controls-hidden');
+            }
+        }
+
+        // Resize handle functionality
+        function initResize() {
+            const handle = document.getElementById('resizeHandle');
+            const nav = document.getElementById('folderNav');
+            let isResizing = false;
+
+            handle.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                handle.classList.add('dragging');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                const newWidth = e.clientX;
+                if (newWidth >= 120 && newWidth <= 400) {
+                    nav.style.width = newWidth + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    handle.classList.remove('dragging');
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                }
+            });
+        }
+
+        // Start
+        init();
+        initResize();
+    </script>
+</body>
+</html>
