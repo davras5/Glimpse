@@ -37,11 +37,26 @@
             letter-spacing: 0.3px;
         }
 
+        .github-link {
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            padding: 6px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .github-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
         .controls {
             display: flex;
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
+            margin-left: auto;
         }
 
         .control-group {
@@ -243,6 +258,97 @@
             margin-bottom: 5px;
         }
 
+        .select-folder-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            padding: 14px 24px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(15, 52, 96, 0.9);
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .select-folder-btn:hover {
+            background: rgba(233, 69, 96, 0.9);
+        }
+
+        .select-folder-btn .icon {
+            font-size: 22px;
+        }
+
+        /* After images loaded, move to top-right */
+        body.has-images .select-folder-btn {
+            top: 15px;
+            left: auto;
+            right: 15px;
+            transform: none;
+        }
+
+        body.fullscreen .select-folder-btn {
+            display: none;
+        }
+
+        .format-hint {
+            position: absolute;
+            top: calc(50% + 50px);
+            left: 50%;
+            transform: translateX(-50%);
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        body.has-images .format-hint {
+            display: none;
+        }
+
+        /* Hide controls when no images loaded */
+        body:not(.has-images) .player-controls,
+        body:not(.has-images) .nav-btn,
+        body:not(.has-images) .thumbnails {
+            display: none;
+        }
+
+        .browser-warning {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #aaa;
+            padding: 20px;
+            max-width: 400px;
+        }
+
+        .browser-warning .warning-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+
+        .browser-warning h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .browser-warning p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        body.has-images .browser-warning {
+            display: none;
+        }
+
         .folder-btn {
             padding: 8px 12px;
             font-size: 12px;
@@ -278,6 +384,58 @@
             flex-shrink: 0;
             opacity: 0.6;
             font-size: 11px;
+        }
+
+        .folder-btn .folder-toggle {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .folder-btn .folder-toggle:hover {
+            opacity: 1;
+        }
+
+        .folder-btn.expanded .folder-toggle {
+            transform: rotate(90deg);
+        }
+
+        .folder-files {
+            display: none;
+            padding-left: 12px;
+        }
+
+        .folder-files.visible {
+            display: block;
+        }
+
+        .file-btn {
+            padding: 4px 8px 4px 16px;
+            font-size: 11px;
+            text-align: left;
+            border-radius: 3px;
+            background: transparent;
+            color: #999;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-btn:hover {
+            background: #0f3460;
+            color: #ddd;
+        }
+
+        .file-btn.active {
+            background: #4a2040;
+            color: #e94560;
         }
 
         .main-content {
@@ -572,6 +730,11 @@
                 </select>
             </div>
         </div>
+        <a href="https://github.com/davras5/Glimpse" target="_blank" class="github-link" title="Quellcode auf GitHub">
+            <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+        </a>
     </div>
 
     <div class="app-container">
@@ -584,9 +747,22 @@
         <div class="thumbnails" id="thumbnails"></div>
 
         <div class="viewer" onclick="navigate(1)">
-            <button class="nav-btn prev" onclick="event.stopPropagation(); navigate(-1)">&#10094;</button>
+            <button class="select-folder-btn" id="selectFolderBtn" onclick="event.stopPropagation(); selectFolder()" title="Bilderordner öffnen">
+                <span class="icon">&#128193;</span>
+                <span>Ordner wählen...</span>
+            </button>
+            <div class="format-hint">Unterstützte Formate: JPG, PNG, GIF, WebP, BMP</div>
+            <!-- Hidden file input for browsers without File System Access API -->
+            <input type="file" id="folderInput" webkitdirectory multiple accept="image/*" style="display: none;" onchange="handleFolderInput(this)">
+            <!-- Warning for unsupported browsers -->
+            <div class="browser-warning" id="browserWarning" style="display: none;">
+                <div class="warning-icon">&#9888;</div>
+                <h3>Browser nicht unterstützt</h3>
+                <p>Ihr Browser unterstützt die Ordnerauswahl leider nicht. Bitte verwenden Sie Chrome, Edge, Firefox oder einen anderen modernen Browser.</p>
+            </div>
+            <button class="nav-btn prev" onclick="event.stopPropagation(); navigate(-1)" title="Vorheriges Bild (←)">&#10094;</button>
             <img id="mainImage" src="" alt="Baustellenfoto">
-            <button class="nav-btn next" onclick="event.stopPropagation(); navigate(1)">&#10095;</button>
+            <button class="nav-btn next" onclick="event.stopPropagation(); navigate(1)" title="Nächstes Bild (→)">&#10095;</button>
             <div class="loading" id="loading"></div>
             <div class="filter-loader" id="filterLoader"><div class="spinner"></div></div>
 
@@ -597,9 +773,9 @@
                 </div>
                 <div class="controls-row">
                     <div class="controls-left">
-                        <button class="player-btn play-btn" id="playBtnPlayer" onclick="togglePlay()" title="Play/Pause (Leertaste)">&#9654;</button>
-                        <button class="player-btn" onclick="navigate(-1)" title="Vorheriges Bild">&#10094;</button>
-                        <button class="player-btn" onclick="navigate(1)" title="Nächstes Bild">&#10095;</button>
+                        <button class="player-btn play-btn" id="playBtnPlayer" onclick="togglePlay()" title="Abspielen/Pause (Leertaste)">&#9654;</button>
+                        <button class="player-btn" onclick="navigate(-1)" title="Vorheriges Bild (←)">&#10094;</button>
+                        <button class="player-btn" onclick="navigate(1)" title="Nächstes Bild (→)">&#10095;</button>
                         <span class="file-info"><span id="currentFolder2"></span><span id="currentFile2"></span></span>
                     </div>
                     <div class="controls-right">
@@ -613,8 +789,13 @@
     </div>
 
     <script>
-        // Image data embedded
-        const allImages = ["2024-01_Altlasten und Aushub/PXL_20240110_094909339.jpg","2024-01_Altlasten und Aushub/PXL_20240124_074207204.jpg","2024-01_Altlasten und Aushub/PXL_20240124_074305785.jpg","2024-01_Altlasten und Aushub/PXL_20240129_084721824.jpg","2024-01_Altlasten und Aushub/PXL_20240129_084725863.jpg","2024-01_Altlasten und Aushub/PXL_20240129_130955055.jpg","2024-01_Altlasten und Aushub/PXL_20240129_131002613.jpg","2024-01_Altlasten und Aushub/PXL_20240129_140059836.jpg","2024-01_Altlasten und Aushub/PXL_20240129_140403099.jpg","2024-01_Altlasten und Aushub/PXL_20240130_120616387.jpg","2024-02_Aushub und Abbrüche/IMG_0017.jpg","2024-02_Aushub und Abbrüche/IMG_0018.jpg","2024-02_Aushub und Abbrüche/IMG_0019.jpg","2024-02_Aushub und Abbrüche/IMG_0020.jpg","2024-02_Aushub und Abbrüche/IMG_0021.jpg","2024-02_Aushub und Abbrüche/IMG_0022.jpg","2024-02_Aushub und Abbrüche/IMG_0023.jpg","2024-02_Aushub und Abbrüche/IMG_0024.jpg","2024-02_Aushub und Abbrüche/IMG_0025.jpg","2024-02_Aushub und Abbrüche/IMG_0026.jpg","2024-02_Aushub und Abbrüche/IMG_0027.jpg","2024-02_Aushub und Abbrüche/IMG_0028.jpg","2024-02_Aushub und Abbrüche/IMG_0029.jpg","2024-02_Aushub und Abbrüche/IMG_0030.jpg","2024-02_Aushub und Abbrüche/IMG_0031.jpg","2024-02_Aushub und Abbrüche/IMG_0032.jpg","2024-02_Aushub und Abbrüche/IMG_0033.jpg","2024-02_Aushub und Abbrüche/IMG_0034.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085118535.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085126611.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085731720.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_085801212.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090116836.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090120393.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090238344.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_090251624.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_091151462.jpg","2024-02_Aushub und Abbrüche/PXL_20240205_091832836.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065648306.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065655945.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065728821.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065731228.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065758175.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065804116.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065813349.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065855819.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065907219.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065935950.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065942859.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_065948681.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070000783.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070013783.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070016811.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070043008.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070052650.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070125551.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070211758.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070212848.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070257463.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070302906.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_070321727.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_071312927.jpg","2024-02_Aushub und Abbrüche/PXL_20240213_071318356.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_092927668.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_092932242.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_092938970.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104316367.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104324234.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104326857.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_104732175.jpg","2024-02_Aushub und Abbrüche/PXL_20240219_165220510.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071102210.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071112929.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071143320.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071151290.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071200071.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071204887.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071220025.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071233007.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_071301249.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_103810657.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_103813583.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_103849062.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104018437.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104052199.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104112497.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104116035.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104128750.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104415295.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104520389.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104530074.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104545362.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104557768.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104612396.jpg","2024-02_Aushub und Abbrüche/PXL_20240220_104621227.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084124813.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084140168.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084831045.jpg","2024-02_Aushub und Abbrüche/PXL_20240221_084835562.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_143203561.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_143216452.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_145932808.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_145936689.jpg","2024-02_Aushub und Abbrüche/PXL_20240227_145941179.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_142752090.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_142807444.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143059500.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143136400.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143151413.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143230468.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143308467.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143329317.MP.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143407405.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_143911753.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_144634282.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_144637751.jpg","2024-02_Aushub und Abbrüche/PXL_20240228_144651034.jpg","2024-03_Abrüche und Aushub/PXL_20240110_094909339.jpg","2024-03_Abrüche und Aushub/PXL_20240124_074207204.jpg","2024-03_Abrüche und Aushub/PXL_20240124_074305785.jpg","2024-03_Abrüche und Aushub/PXL_20240129_084721824.jpg","2024-03_Abrüche und Aushub/PXL_20240129_084725863.jpg","2024-03_Abrüche und Aushub/PXL_20240129_130955055.jpg","2024-03_Abrüche und Aushub/PXL_20240129_131002613.jpg","2024-03_Abrüche und Aushub/PXL_20240129_140059836.jpg","2024-03_Abrüche und Aushub/PXL_20240129_140403099.jpg","2024-03_Abrüche und Aushub/PXL_20240130_120616387.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4732.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4733.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4734.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4796.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4797.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4798.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4799.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4800.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4801.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4802.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4803.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4804.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4805.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4806.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4807.jpg","2024-04_Abrüche, Statik und Aushub/IMG_4808.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_053319071.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_053327037.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095023153.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095037771.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095106392.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095121304.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095258803.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095554230.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095554230_exported_880_1712051767594.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095730523.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_095737870.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100722574.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100744375.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100848725.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100920144.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100937068.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240402_100945396.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240408_061612646.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240408_075624005.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240408_075635698.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_061344723.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_061350011.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062540588.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062552736.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062625159.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062627576.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062640373.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062659545.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_062747336.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_063113189.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240409_063218515.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240416_122600285.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240416_122603344.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240416_122739790.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084307157.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084310711.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084315179.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084320064.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084406561.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_084725203.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240419_085031249.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112645693.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112705168.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112709791.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112720141.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112725077.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240422_112739389.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093153520.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093200706.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093210973.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093233830.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093258353.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093311642.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093324441.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093600657.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_093813866.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094007594.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094015091.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094410983.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094421121.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094647521.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094703453.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240424_094714478.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095631538.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095640484.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095646594.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095706712.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240429_095711199.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_062857803.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_062924780.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_062945218.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064252685.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064302687.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064318349.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064324507.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064428370.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064519827.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064648583.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_064659396.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_065218692.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_065520299.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070358264.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070629472.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070639252.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070649707.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070655969.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070702180.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070714864.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070734714.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070738448.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_070751010.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_120550751.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_120557549.MP.jpg","2024-04_Abrüche, Statik und Aushub/PXL_20240430_125851912.jpg","2024-05_Statik und Baumeister/IMG_4810.JPG","2024-05_Statik und Baumeister/IMG_4811.JPG","2024-05_Statik und Baumeister/IMG_4812.JPG","2024-05_Statik und Baumeister/IMG_4813.JPG","2024-05_Statik und Baumeister/IMG_4814.JPG","2024-05_Statik und Baumeister/IMG_4815.JPG","2024-05_Statik und Baumeister/IMG_4816.JPG","2024-05_Statik und Baumeister/IMG_4817.JPG","2024-05_Statik und Baumeister/IMG_4818.JPG","2024-05_Statik und Baumeister/IMG_4819.JPG","2024-05_Statik und Baumeister/IMG_4820.JPG","2024-05_Statik und Baumeister/PXL_20240507_054455100.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_054459639.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_054510597.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_055934363.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_055940728.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_055958953.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_060008611.jpg","2024-05_Statik und Baumeister/PXL_20240507_061734802.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062212625.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062301641.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062306897.jpg","2024-05_Statik und Baumeister/PXL_20240507_062350804.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062450407.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_062457132.jpg","2024-05_Statik und Baumeister/PXL_20240507_070739329.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_070756929.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_070806005.MP.jpg","2024-05_Statik und Baumeister/PXL_20240507_093406769.MP.jpg","2024-06/PXL_20240604_071345527.MP.jpg","2024-06/PXL_20240604_071358517.MP.jpg","2024-06/PXL_20240604_071425575.MP.jpg","2024-06/PXL_20240604_071436977.MP.jpg","2024-06/PXL_20240604_071446715.MP.jpg","2024-06/PXL_20240604_071458570.MP.jpg","2024-06/PXL_20240604_071506699.MP.jpg","2024-06/PXL_20240604_071520569.MP.jpg","2024-06/PXL_20240604_071539310.MP.jpg","2024-06/PXL_20240604_071612701.MP.jpg","2024-06/PXL_20240604_071634941.MP.jpg","2024-06/PXL_20240604_071843044.jpg","2024-06/PXL_20240604_071847712.MP.jpg","2024-06/PXL_20240604_071934817.MP.jpg","2024-06/PXL_20240610_114135308.MP.jpg","2024-06/PXL_20240610_114138319.jpg","2024-06/PXL_20240610_114153284.jpg","2024-06/PXL_20240610_114159227.jpg","2024-06/PXL_20240610_114205348.MP.jpg","2024-06/PXL_20240610_114246023.MP.jpg","2024-06/PXL_20240610_114253416.MP.jpg","2024-06/PXL_20240610_114620281.MP.jpg","2024-06/PXL_20240610_114629864.MP.jpg","2024-06/PXL_20240610_114644086.MP.jpg","2024-06/PXL_20240610_130002497.jpg","2024-06/PXL_20240610_130005013.jpg","2024-06/PXL_20240610_130008131.jpg","2024-06/PXL_20240611_081958220.MP.jpg","2024-06/PXL_20240611_083713244.MP.jpg","2024-06/PXL_20240611_083912523.MP.jpg","2024-06/PXL_20240611_085127421.MP.jpg","2024-06/PXL_20240611_085351349.MP.jpg","2024-06/PXL_20240611_085729700.jpg","2024-06/PXL_20240611_085732526.MP.jpg","2024-06/PXL_20240611_085759200.jpg","2024-06/PXL_20240611_092246737.MP.jpg","2024-06/PXL_20240611_092305160.MP.jpg","2024-06/PXL_20240611_093526327.jpg","2025-08/IMG-20250827-WA0023.jpg","2025-08/IMG-20250827-WA0024.jpg","2025-08/IMG-20250827-WA0025.jpg","2025-08/IMG-20250827-WA0026.jpg","2025-08/IMG-20250827-WA0027.jpg","2025-08/IMG-20250827-WA0028.jpg","2025-08/IMG-20250827-WA0029.jpg","2025-08/IMG-20250827-WA0030.jpg","2025-08/IMG-20250827-WA0031.jpg","2025-08/IMG-20250827-WA0032.jpg","2025-08/IMG-20250827-WA0033.jpg","2025-08/IMG-20250827-WA0043.jpg","2025-08/IMG-20250827-WA0044.jpg","2025-08/PXL_20250825_052615130.jpg","2025-08/PXL_20250826_090943106.jpg","2025-08/PXL_20250826_090946914.jpg","2025-08/PXL_20250826_091003025.jpg","2025-08/PXL_20250826_091212087.jpg","2025-08/PXL_20250826_091626524.jpg","2025-08/PXL_20250826_091644740.jpg","2025-08/PXL_20250826_091646816.jpg","2025-08/PXL_20250826_092027083.jpg","2025-08/PXL_20250826_092244120.jpg","2025-08/PXL_20250826_092448632.jpg","2025-08/PXL_20250826_092731315.jpg","2025-08/PXL_20250826_093216850.jpg","2025-08/PXL_20250826_093506528.jpg","2025-08/PXL_20250826_095008644.jpg","2025-08/PXL_20250826_095236985.jpg","2025-08/PXL_20250826_095442699.jpg","2025-08/PXL_20250826_100318688.jpg","2025-08/PXL_20250826_100503829.jpg","2025-08/PXL_20250826_100751605.jpg","2025-08/PXL_20250826_101022637.jpg","2025-08/PXL_20250901_072734794.jpg","2025-08/PXL_20250901_075454781.jpg","2025-08/PXL_20250901_075842999.jpg","2025-08/PXL_20250901_075846446.jpg","2025-08/PXL_20250901_075853030.jpg","2025-08/PXL_20250901_080348912.jpg","2025-08/PXL_20250901_080352156.jpg","2025-08/PXL_20250901_110848078.jpg","2025-08/PXL_20250901_110911860.jpg","2025-09/IMG-20250902-WA0000.jpg","2025-09/jpg.jpg","2025-09/PXL_20250901_124337416.jpg","2025-09/PXL_20250901_125025293.jpg","2025-09/PXL_20250901_125030847.jpg","2025-09/PXL_20250901_132812891.jpg","2025-09/PXL_20250901_132958505.jpg","2025-09/PXL_20250901_133000875.jpg","2025-09/PXL_20250901_133049582.jpg","2025-09/PXL_20250901_133110083.jpg","2025-09/PXL_20250901_133128836.jpg","2025-09/PXL_20250902_050609715.jpg","2025-09/PXL_20250902_050613003.jpg","2025-09/PXL_20250902_050617915.jpg","2025-09/PXL_20250902_050623638.jpg","2025-09/PXL_20250902_050630899.jpg","2025-09/PXL_20250902_050634117.jpg","2025-09/PXL_20250902_050640978.jpg","2025-09/PXL_20250902_050656136.jpg","2025-09/PXL_20250902_051115475.jpg","2025-09/PXL_20250902_135838332.jpg","2025-09/PXL_20250902_135842401.jpg","2025-09/PXL_20250902_135852298.jpg","2025-09/PXL_20250902_135923954.jpg","2025-09/PXL_20250902_140005436.jpg","2025-09/PXL_20250902_151133961.jpg","2025-09/PXL_20250902_151556456.jpg","2025-10/PXL_20241007_075324780.MP.jpg","2025-10/PXL_20241007_075327256.MP.jpg","2025-10/PXL_20241007_080044220.MP.jpg","2025-10/PXL_20241007_080147993.MP.jpg","2025-10/PXL_20241016_071213913.MP.jpg","2025-10/PXL_20251015_085414795.jpg","2025-12/PXL_20241204_095246814.jpg","2025-12/PXL_20241204_095358267.jpg","2025-12/PXL_20241204_095435962.jpg","2025-12/PXL_20241204_095618901.jpg","2025-12/PXL_20241204_095623651.jpg","2025-12/PXL_20241204_095631647.jpg","2025-12/PXL_20241204_095823497.jpg","2025-12/PXL_20241204_095831548.jpg","2025-12/PXL_20241204_095915738.jpg","2025-12/PXL_20241204_095931247.jpg","2025-12/PXL_20241204_100127032.jpg","2025-12/PXL_20251212_131626552.jpg","2025-12/PXL_20251212_134038510.jpg","2025-12/PXL_20251212_134045998.jpg","2025-12/PXL_20251217_075253644.jpg","2025-12/PXL_20251217_081259805.jpg","2025-12/PXL_20251217_081324047.jpg","2025-12/PXL_20251217_082153886.jpg","2025-12/PXL_20251217_082201358.jpg","2025-12/PXL_20251217_082223661.jpg","2025-12/PXL_20251217_082251313.jpg","2025-12/PXL_20251217_085356153.jpg","2025-12/PXL_20251217_085401724.jpg","2025-12/PXL_20251217_085405188.jpg","2025-12/PXL_20251217_085606092.jpg","2025-12/PXL_20251217_085610014.jpg","2025-12/PXL_20251217_090500345.jpg","2025-12/PXL_20251217_112712093.jpg","2025-12/PXL_20251217_112729520.jpg","2025-12/PXL_20251219_115759894.jpg","2025-12/PXL_20251219_115804252.jpg","2025-12/PXL_20251219_115837886.jpg","2025-12/PXL_20251219_115840547.jpg","2025-12/PXL_20251219_120005771.jpg"];
+        // Image list - starts empty, populated when user selects a folder
+        let allImages = [];
+
+        // File System Access API state
+        let directoryHandle = null;
+        let fileHandlesMap = new Map(); // path -> FileSystemFileHandle
+        const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
 
         let images = [...allImages];
         let currentIndex = 0;
@@ -628,35 +809,28 @@
         const PRELOAD_COUNT = 2; // Number of images to preload ahead
 
         // Get unique folders
-        const folders = [...new Set(allImages.map(img => img.split('/')[0]))].sort();
+        let folders = [...new Set(allImages.map(img => img.split('/')[0]))].sort();
+
+        // Check browser support for folder selection
+        function checkBrowserSupport() {
+            const hasFileSystemAccess = 'showDirectoryPicker' in window;
+            const hasWebkitDirectory = 'webkitdirectory' in document.createElement('input');
+            return hasFileSystemAccess || hasWebkitDirectory;
+        }
 
         // Initialize
-        function init() {
-            buildFolderNav();
-            buildThumbnails();
-            showImage(0);
+        async function init() {
             updateDuration();
 
-            // Hide app loader after first image loads and UI is rendered
-            const mainImg = document.getElementById('mainImage');
-            const hideAppLoader = () => {
-                // Wait for frames to ensure image + UI is painted
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        // Additional small delay for thumbnails/layout to stabilize
-                        setTimeout(() => {
-                            document.getElementById('appLoader').classList.add('hidden');
-                        }, 50);
-                    });
-                });
-            };
-            if (mainImg.complete && mainImg.naturalWidth > 0) {
-                hideAppLoader();
-            } else {
-                mainImg.addEventListener('load', hideAppLoader, { once: true });
-                // Fallback timeout in case image fails
-                setTimeout(hideAppLoader, 2000);
+            // Check browser support and show warning if needed
+            if (!checkBrowserSupport()) {
+                document.getElementById('selectFolderBtn').style.display = 'none';
+                document.getElementById('browserWarning').style.display = 'block';
+                document.querySelector('.format-hint').style.display = 'none';
             }
+
+            // Hide app loader immediately (no images to load initially)
+            document.getElementById('appLoader').classList.add('hidden');
 
             // Keyboard navigation
             document.addEventListener('keydown', (e) => {
@@ -693,10 +867,73 @@
             const nav = document.getElementById('folderNav');
             nav.innerHTML = '<div class="folder-nav-title">Ordner</div>';
             nav.innerHTML += `<button class="folder-btn active" onclick="filterByFolder('all')"><span class="folder-name">Alle Fotos</span><span class="folder-count">${allImages.length}</span></button>`;
+
             folders.forEach(folder => {
-                const count = allImages.filter(img => img.startsWith(folder + '/')).length;
-                nav.innerHTML += `<button class="folder-btn" onclick="filterByFolder('${folder}')"><span class="folder-name">${folder}</span><span class="folder-count">${count}</span></button>`;
+                const folderImages = allImages.filter(img => img.startsWith(folder + '/'));
+                const count = folderImages.length;
+                const escapedFolder = folder.replace(/'/g, "\\'");
+
+                // Folder button with toggle
+                let html = `<button class="folder-btn" data-folder="${escapedFolder}" onclick="toggleFolder(this, '${escapedFolder}', event)">
+                    <span class="folder-toggle">&#9658;</span>
+                    <span class="folder-name">${folder}</span>
+                    <span class="folder-count">${count}</span>
+                </button>`;
+
+                // Files container
+                html += `<div class="folder-files" data-folder="${escapedFolder}">`;
+                folderImages.forEach(imgPath => {
+                    const fileName = imgPath.split('/').pop();
+                    const escapedPath = imgPath.replace(/'/g, "\\'");
+                    html += `<button class="file-btn" data-path="${escapedPath}" onclick="showSingleFile(event, '${escapedPath}')" title="${fileName}">${fileName}</button>`;
+                });
+                html += '</div>';
+
+                nav.innerHTML += html;
             });
+        }
+
+        function toggleFolder(btn, folder, e) {
+            // Check if click was on the toggle arrow
+            const isToggleClick = e && e.target.classList.contains('folder-toggle');
+            const filesContainer = document.querySelector(`.folder-files[data-folder="${folder}"]`);
+            const isExpanded = btn.classList.contains('expanded');
+
+            if (isToggleClick) {
+                // Just toggle expand/collapse
+                e.stopPropagation();
+                if (isExpanded) {
+                    btn.classList.remove('expanded');
+                    filesContainer.classList.remove('visible');
+                } else {
+                    btn.classList.add('expanded');
+                    filesContainer.classList.add('visible');
+                }
+            } else {
+                // Filter by folder and expand
+                if (!isExpanded) {
+                    btn.classList.add('expanded');
+                    filesContainer.classList.add('visible');
+                }
+                filterByFolder(folder);
+            }
+        }
+
+        function showSingleFile(e, imgPath) {
+            e.stopPropagation();
+
+            // Update active states
+            document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.file-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.file-btn[data-path="${imgPath.replace(/'/g, "\\'")}"]`)?.classList.add('active');
+
+            // Set to single image mode
+            images = [imgPath];
+            currentIndex = 0;
+            currentFolder = 'single';
+            preloadCache.clear();
+            buildThumbnails();
+            showImage(0);
         }
 
         function filterByFolder(folder) {
@@ -712,8 +949,11 @@
                     (folder === 'all' && btnFolder === 'Alle Fotos') || btnFolder === folder);
             });
 
+            // Clear file button active states
+            document.querySelectorAll('.file-btn').forEach(b => b.classList.remove('active'));
+
             // Defer heavy work to allow UI to update
-            setTimeout(() => {
+            setTimeout(async () => {
                 currentFolder = folder;
                 if (folder === 'all') {
                     images = [...allImages];
@@ -746,14 +986,14 @@
             }, 50);
         }
 
-        function sortImages() {
+        async function sortImages() {
             const order = document.getElementById('sortOrder').value;
             preloadCache.clear(); // Clear cache when order changes
             images.sort((a, b) => {
                 const folderA = a.split('/')[0];
                 const folderB = b.split('/')[0];
-                const nameA = a.split('/')[1];
-                const nameB = b.split('/')[1];
+                const nameA = a.split('/').pop();
+                const nameB = b.split('/').pop();
 
                 switch(order) {
                     case 'folder-asc':
@@ -770,73 +1010,54 @@
             showImage(currentIndex);
         }
 
+        // Track thumbnail blob URLs for cleanup
+        const thumbnailBlobUrls = new Set();
+
         function buildThumbnails() {
             const container = document.getElementById('thumbnails');
+
+            // Revoke old thumbnail blob URLs to prevent memory leak
+            for (const url of thumbnailBlobUrls) {
+                URL.revokeObjectURL(url);
+            }
+            thumbnailBlobUrls.clear();
+
             container.innerHTML = '';
-            images.forEach((img, i) => {
+
+            for (let i = 0; i < images.length; i++) {
+                const imgPath = images[i];
                 const thumb = document.createElement('img');
                 thumb.className = 'thumb' + (i === currentIndex ? ' active' : '');
-                thumb.src = encodeURI(img);
-                thumb.onclick = () => showImage(i);
+                thumb.onclick = ((idx) => () => showImage(idx))(i);
                 thumb.loading = 'lazy';
-                container.appendChild(thumb);
-            });
-        }
 
-        function showImage(index) {
-            if (images.length === 0) return;
+                // Check if using File System Access API or fallback
+                const fileHandle = fileHandlesMap.get(imgPath);
+                const fileObject = fileObjectsMap.get(imgPath);
 
-            currentIndex = (index + images.length) % images.length;
-            const img = document.getElementById('mainImage');
-            const loading = document.getElementById('loading');
-            const imagePath = images[currentIndex];
-            const imageUrl = encodeURI(imagePath);
-
-            // Clear any pending loading indicator
-            clearTimeout(loadingTimeout);
-            loading.classList.remove('visible');
-
-            // Check if image is already preloaded
-            const cached = preloadCache.get(imagePath);
-            if (cached && cached.complete && cached.naturalWidth > 0) {
-                // Image is preloaded - instant display
-                img.src = cached.src;
-                preloadAhead();
-            } else {
-                // Not preloaded - load with spinner fallback
-                loadingTimeout = setTimeout(() => {
-                    loading.classList.add('visible');
-                }, 300);
-
-                const newImg = new Image();
-                newImg.onload = () => {
-                    clearTimeout(loadingTimeout);
-                    loading.classList.remove('visible');
-                    img.src = newImg.src;
-                    preloadCache.set(imagePath, newImg);
-                    preloadAhead();
-                };
-                newImg.onerror = () => {
-                    clearTimeout(loadingTimeout);
-                    loading.classList.remove('visible');
-                };
-                newImg.src = imageUrl;
-            }
-
-            // Update info in player controls
-            const parts = images[currentIndex].split('/');
-            document.getElementById('currentFolder2').textContent = parts[0] + ' / ';
-            document.getElementById('currentFile2').textContent = parts[1];
-            document.getElementById('counter').textContent = `${currentIndex + 1} / ${images.length}`;
-            document.getElementById('progress').style.width = ((currentIndex + 1) / images.length * 100) + '%';
-
-            // Update thumbnails
-            document.querySelectorAll('.thumb').forEach((t, i) => {
-                t.classList.toggle('active', i === currentIndex);
-                if (i === currentIndex) {
-                    t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                if (fileHandle) {
+                    // Load thumbnail via blob URL (File System Access API)
+                    (async (thumbEl, handle, blobUrls) => {
+                        try {
+                            const file = await handle.getFile();
+                            const url = URL.createObjectURL(file);
+                            blobUrls.add(url);
+                            thumbEl.src = url;
+                        } catch (err) {
+                            thumbEl.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
+                        }
+                    })(thumb, fileHandle, thumbnailBlobUrls);
+                } else if (fileObject) {
+                    // Load thumbnail via blob URL (fallback File object)
+                    const url = URL.createObjectURL(fileObject);
+                    thumbnailBlobUrls.add(url);
+                    thumb.src = url;
+                } else {
+                    thumb.src = encodeURI(imgPath);
                 }
-            });
+
+                container.appendChild(thumb);
+            }
         }
 
         function preloadAhead() {
@@ -951,6 +1172,367 @@
                     document.body.style.userSelect = '';
                 }
             });
+        }
+
+        // File System Access API - Select and scan folder
+        async function selectFolder() {
+            // Check API support - use fallback if not available
+            if (!('showDirectoryPicker' in window)) {
+                // Use fallback file input
+                document.getElementById('folderInput').click();
+                return;
+            }
+
+            try {
+                // Show app loader during scanning
+                const appLoader = document.getElementById('appLoader');
+                const loaderText = appLoader.querySelector('.loader-text');
+                appLoader.classList.remove('hidden');
+                loaderText.textContent = 'Scanne Ordner...';
+
+                // Request directory access
+                directoryHandle = await window.showDirectoryPicker();
+                fileHandlesMap.clear();
+
+                // Scan recursively for images
+                const scannedImages = [];
+                await scanDirectory(directoryHandle, '', scannedImages);
+
+                loadImagesIntoGallery(scannedImages);
+
+            } catch (err) {
+                // User cancelled or error
+                const appLoader = document.getElementById('appLoader');
+                if (err.name !== 'AbortError') {
+                    console.error('Folder selection error:', err);
+                }
+                appLoader.classList.add('hidden');
+            }
+        }
+
+        // Helper: Load scanned images into gallery UI
+        function loadImagesIntoGallery(scannedImages) {
+            const appLoader = document.getElementById('appLoader');
+            const loaderText = appLoader.querySelector('.loader-text');
+
+            if (scannedImages.length === 0) {
+                loaderText.textContent = 'Keine Bilder gefunden';
+                setTimeout(() => appLoader.classList.add('hidden'), 1500);
+                return false;
+            }
+
+            // Update image list
+            allImages = scannedImages.sort();
+            images = [...allImages];
+            preloadCache.clear();
+
+            // Rebuild folders list
+            const newFolders = [...new Set(allImages.map(img => img.split('/')[0]))].sort();
+            folders.length = 0;
+            folders.push(...newFolders);
+
+            // Reset and rebuild UI
+            currentFolder = 'all';
+            currentIndex = 0;
+            buildFolderNav();
+            buildThumbnails();
+
+            // Add has-images class to move button to top-right
+            document.body.classList.add('has-images');
+
+            // Update button text to indicate folder can be changed
+            const btnText = document.querySelector('#selectFolderBtn span:last-child');
+            if (btnText) btnText.textContent = 'Ordner ändern...';
+
+            loaderText.textContent = `${scannedImages.length} Bilder gefunden`;
+
+            // Show first image then hide loader
+            showImage(0);
+            const mainImg = document.getElementById('mainImage');
+            const hideLoader = () => {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        setTimeout(() => {
+                            appLoader.classList.add('hidden');
+                            loaderText.textContent = 'Lade Galerie...';
+                        }, 300);
+                    });
+                });
+            };
+            if (mainImg.complete && mainImg.naturalWidth > 0) {
+                hideLoader();
+            } else {
+                mainImg.addEventListener('load', hideLoader, { once: true });
+                setTimeout(hideLoader, 2000);
+            }
+            return true;
+        }
+
+        async function scanDirectory(dirHandle, path, results) {
+            for await (const entry of dirHandle.values()) {
+                const entryPath = path ? `${path}/${entry.name}` : entry.name;
+
+                if (entry.kind === 'directory') {
+                    // Skip hidden directories
+                    if (!entry.name.startsWith('.')) {
+                        await scanDirectory(entry, entryPath, results);
+                    }
+                } else if (entry.kind === 'file') {
+                    // Check if it's an image
+                    const ext = entry.name.toLowerCase().substring(entry.name.lastIndexOf('.'));
+                    if (IMAGE_EXTENSIONS.includes(ext)) {
+                        results.push(entryPath);
+                        fileHandlesMap.set(entryPath, entry);
+                    }
+                }
+            }
+        }
+
+        // Fallback: Handle folder input for browsers without File System Access API
+        const fileObjectsMap = new Map(); // path -> File object (for fallback)
+
+        async function handleFolderInput(input) {
+            const files = input.files;
+            if (!files || files.length === 0) return;
+
+            // Show app loader during processing
+            const appLoader = document.getElementById('appLoader');
+            const loaderText = appLoader.querySelector('.loader-text');
+            appLoader.classList.remove('hidden');
+            loaderText.textContent = 'Verarbeite Dateien...';
+
+            // Clear previous state
+            fileHandlesMap.clear();
+            fileObjectsMap.clear();
+            preloadCache.clear();
+
+            const scannedImages = [];
+
+            // Process files - webkitRelativePath contains folder structure
+            for (const file of files) {
+                const ext = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+                if (IMAGE_EXTENSIONS.includes(ext)) {
+                    // webkitRelativePath is like "RootFolder/SubFolder/image.jpg"
+                    // We want to strip the root folder to match our structure
+                    let relativePath = file.webkitRelativePath;
+
+                    // Remove the root folder from path (first segment)
+                    const pathParts = relativePath.split('/');
+                    if (pathParts.length > 1) {
+                        // Keep subfolder/filename structure
+                        relativePath = pathParts.slice(1).join('/');
+                    }
+
+                    // Only add if it has a folder structure (skip root-level files)
+                    if (relativePath.includes('/')) {
+                        scannedImages.push(relativePath);
+                        fileObjectsMap.set(relativePath, file);
+                    } else {
+                        // Root level file - use full path
+                        scannedImages.push(file.webkitRelativePath);
+                        fileObjectsMap.set(file.webkitRelativePath, file);
+                    }
+                }
+            }
+
+            // Reset input for future selections
+            input.value = '';
+
+            loadImagesIntoGallery(scannedImages);
+        }
+
+        // Display image - handles File System Access API, fallback, and path-based loading
+        async function showImage(index) {
+            if (images.length === 0) return;
+
+            currentIndex = (index + images.length) % images.length;
+            const img = document.getElementById('mainImage');
+            const loading = document.getElementById('loading');
+            const imagePath = images[currentIndex];
+
+            // Clear any pending loading indicator
+            clearTimeout(loadingTimeout);
+            loading.classList.remove('visible');
+
+            // Check if we have a file handle (File System Access API) or file object (fallback)
+            const fileHandle = fileHandlesMap.get(imagePath);
+            const fileObject = fileObjectsMap.get(imagePath);
+
+            if (fileHandle) {
+                // Use File System Access API
+                loadingTimeout = setTimeout(() => {
+                    loading.classList.add('visible');
+                }, 300);
+
+                try {
+                    const file = await fileHandle.getFile();
+                    const url = URL.createObjectURL(file);
+
+                    // Revoke old blob URL if exists
+                    if (img.src.startsWith('blob:')) {
+                        URL.revokeObjectURL(img.src);
+                    }
+
+                    const newImg = new Image();
+                    newImg.onload = () => {
+                        clearTimeout(loadingTimeout);
+                        loading.classList.remove('visible');
+                        img.src = url;
+                        preloadAheadFS();
+                    };
+                    newImg.onerror = () => {
+                        clearTimeout(loadingTimeout);
+                        loading.classList.remove('visible');
+                        URL.revokeObjectURL(url);
+                    };
+                    newImg.src = url;
+                } catch (err) {
+                    clearTimeout(loadingTimeout);
+                    loading.classList.remove('visible');
+                    console.error('Error loading image:', err);
+                }
+            } else if (fileObject) {
+                // Use fallback File object (from input element)
+                loadingTimeout = setTimeout(() => {
+                    loading.classList.add('visible');
+                }, 300);
+
+                const url = URL.createObjectURL(fileObject);
+
+                // Revoke old blob URL if exists
+                if (img.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(img.src);
+                }
+
+                const newImg = new Image();
+                newImg.onload = () => {
+                    clearTimeout(loadingTimeout);
+                    loading.classList.remove('visible');
+                    img.src = url;
+                    preloadAheadFallback();
+                };
+                newImg.onerror = () => {
+                    clearTimeout(loadingTimeout);
+                    loading.classList.remove('visible');
+                    URL.revokeObjectURL(url);
+                };
+                newImg.src = url;
+            } else {
+                // Use original path-based loading (hardcoded list)
+                const imageUrl = encodeURI(imagePath);
+                const cached = preloadCache.get(imagePath);
+
+                if (cached && cached.complete && cached.naturalWidth > 0) {
+                    img.src = cached.src;
+                    preloadAhead();
+                } else {
+                    loadingTimeout = setTimeout(() => {
+                        loading.classList.add('visible');
+                    }, 300);
+
+                    const newImg = new Image();
+                    newImg.onload = () => {
+                        clearTimeout(loadingTimeout);
+                        loading.classList.remove('visible');
+                        img.src = newImg.src;
+                        preloadCache.set(imagePath, newImg);
+                        preloadAhead();
+                    };
+                    newImg.onerror = () => {
+                        clearTimeout(loadingTimeout);
+                        loading.classList.remove('visible');
+                    };
+                    newImg.src = imageUrl;
+                }
+            }
+
+            // Update info in player controls
+            const parts = images[currentIndex].split('/');
+            document.getElementById('currentFolder2').textContent = parts[0] + ' / ';
+            document.getElementById('currentFile2').textContent = parts[parts.length - 1];
+            document.getElementById('counter').textContent = `${currentIndex + 1} / ${images.length}`;
+            document.getElementById('progress').style.width = ((currentIndex + 1) / images.length * 100) + '%';
+
+            // Update thumbnails
+            document.querySelectorAll('.thumb').forEach((t, i) => {
+                t.classList.toggle('active', i === currentIndex);
+                if (i === currentIndex) {
+                    t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            });
+        }
+
+        // Preload for File System Access API
+        async function preloadAheadFS() {
+            for (let i = 1; i <= PRELOAD_COUNT; i++) {
+                const nextIndex = (currentIndex + i) % images.length;
+                const nextPath = images[nextIndex];
+                const fileHandle = fileHandlesMap.get(nextPath);
+
+                if (fileHandle && !preloadCache.has(nextPath)) {
+                    try {
+                        const file = await fileHandle.getFile();
+                        const url = URL.createObjectURL(file);
+                        const preloadImg = new Image();
+                        preloadImg.src = url;
+                        preloadImg._blobUrl = url; // Store for cleanup
+                        preloadCache.set(nextPath, preloadImg);
+                    } catch (err) {
+                        // Ignore preload errors
+                    }
+                }
+            }
+
+            // Clean up old cache entries
+            if (preloadCache.size > PRELOAD_COUNT + 3) {
+                const keepPaths = new Set();
+                for (let i = -1; i <= PRELOAD_COUNT; i++) {
+                    const idx = (currentIndex + i + images.length) % images.length;
+                    keepPaths.add(images[idx]);
+                }
+                for (const [path, img] of preloadCache.entries()) {
+                    if (!keepPaths.has(path)) {
+                        if (img._blobUrl) {
+                            URL.revokeObjectURL(img._blobUrl);
+                        }
+                        preloadCache.delete(path);
+                    }
+                }
+            }
+        }
+
+        // Preload for fallback File objects
+        function preloadAheadFallback() {
+            for (let i = 1; i <= PRELOAD_COUNT; i++) {
+                const nextIndex = (currentIndex + i) % images.length;
+                const nextPath = images[nextIndex];
+                const fileObject = fileObjectsMap.get(nextPath);
+
+                if (fileObject && !preloadCache.has(nextPath)) {
+                    const url = URL.createObjectURL(fileObject);
+                    const preloadImg = new Image();
+                    preloadImg.src = url;
+                    preloadImg._blobUrl = url;
+                    preloadCache.set(nextPath, preloadImg);
+                }
+            }
+
+            // Clean up old cache entries
+            if (preloadCache.size > PRELOAD_COUNT + 3) {
+                const keepPaths = new Set();
+                for (let i = -1; i <= PRELOAD_COUNT; i++) {
+                    const idx = (currentIndex + i + images.length) % images.length;
+                    keepPaths.add(images[idx]);
+                }
+                for (const [path, img] of preloadCache.entries()) {
+                    if (!keepPaths.has(path)) {
+                        if (img._blobUrl) {
+                            URL.revokeObjectURL(img._blobUrl);
+                        }
+                        preloadCache.delete(path);
+                    }
+                }
+            }
         }
 
         // Start
