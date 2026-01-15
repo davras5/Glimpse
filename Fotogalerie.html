@@ -429,8 +429,80 @@
             opacity: 1;
         }
 
+        /* App loading overlay */
+        .app-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        .app-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .app-loader .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(233, 69, 96, 0.2);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin-simple 0.8s linear infinite;
+        }
+
+        .app-loader .loader-text {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Folder filter overlay */
+        .filter-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 15, 35, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .filter-loader.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .filter-loader .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(233, 69, 96, 0.2);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin-simple 0.8s linear infinite;
+        }
+
         @keyframes spin {
             to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes spin-simple {
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
@@ -476,6 +548,12 @@
     </style>
 </head>
 <body>
+    <!-- App loading overlay -->
+    <div class="app-loader" id="appLoader">
+        <div class="spinner"></div>
+        <div class="loader-text">Lade Galerie...</div>
+    </div>
+
     <div class="header">
         <h1>Baustellenfotos Theilerhaus</h1>
         <div class="controls">
@@ -510,6 +588,7 @@
             <img id="mainImage" src="" alt="Baustellenfoto">
             <button class="nav-btn next" onclick="event.stopPropagation(); navigate(1)">&#10095;</button>
             <div class="loading" id="loading"></div>
+            <div class="filter-loader" id="filterLoader"><div class="spinner"></div></div>
 
             <!-- YouTube-style player controls -->
             <div class="player-controls" onclick="event.stopPropagation()">
@@ -558,6 +637,24 @@
             showImage(0);
             updateDuration();
 
+            // Hide app loader after first image loads and renders
+            const mainImg = document.getElementById('mainImage');
+            const hideAppLoader = () => {
+                // Wait for next frame to ensure image is painted
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        document.getElementById('appLoader').classList.add('hidden');
+                    });
+                });
+            };
+            if (mainImg.complete && mainImg.naturalWidth > 0) {
+                hideAppLoader();
+            } else {
+                mainImg.addEventListener('load', hideAppLoader, { once: true });
+                // Fallback timeout in case image fails
+                setTimeout(hideAppLoader, 2000);
+            }
+
             // Keyboard navigation
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft') navigate(-1);
@@ -600,25 +697,48 @@
         }
 
         function filterByFolder(folder) {
-            currentFolder = folder;
-            if (folder === 'all') {
-                images = [...allImages];
-            } else {
-                images = allImages.filter(img => img.startsWith(folder + '/'));
-            }
-            preloadCache.clear(); // Clear cache when changing folder
-            sortImages();
-            currentIndex = 0;
-            buildThumbnails();
-            showImage(0);
+            // Show filter loader
+            const filterLoader = document.getElementById('filterLoader');
+            filterLoader.classList.add('visible');
 
-            // Update active state
+            // Update active state immediately for responsiveness
             document.querySelectorAll('.folder-btn').forEach((btn) => {
                 const nameSpan = btn.querySelector('.folder-name');
                 const btnFolder = nameSpan ? nameSpan.textContent : '';
                 btn.classList.toggle('active',
                     (folder === 'all' && btnFolder === 'Alle Fotos') || btnFolder === folder);
             });
+
+            // Defer heavy work to allow UI to update
+            setTimeout(() => {
+                currentFolder = folder;
+                if (folder === 'all') {
+                    images = [...allImages];
+                } else {
+                    images = allImages.filter(img => img.startsWith(folder + '/'));
+                }
+                preloadCache.clear();
+                sortImages();
+                currentIndex = 0;
+                buildThumbnails();
+                showImage(0);
+
+                // Hide filter loader after image loads and renders
+                const mainImg = document.getElementById('mainImage');
+                const hideLoader = () => {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            filterLoader.classList.remove('visible');
+                        });
+                    });
+                };
+                if (mainImg.complete && mainImg.naturalWidth > 0) {
+                    hideLoader();
+                } else {
+                    mainImg.addEventListener('load', hideLoader, { once: true });
+                    setTimeout(hideLoader, 1000);
+                }
+            }, 50);
         }
 
         function sortImages() {
