@@ -2,7 +2,7 @@
 
 A single-file HTML photo gallery for browsing construction site photos organized in folders.
 
-<img src="assets/Preview.jpg" alt="Italian Trulli">
+<img src="assets/preview.JPG" alt="Frontend Preview">
 
 ## Features
 
