@@ -1,4 +1,4 @@
-# Baustellenfotos Theilerhaus
+# Glimpse
 
 A single-file HTML photo gallery for browsing construction site photos organized in folders.
 
